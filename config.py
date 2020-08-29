@@ -2,7 +2,7 @@ from configparser import ConfigParser
 
 
 config = ConfigParser()
-config.read("config.ini")
+config.read("config.ini", encoding='utf-8-sig')
 
 TOKEN = config['token']['TOKEN']
 
