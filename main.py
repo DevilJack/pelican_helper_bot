@@ -14,7 +14,12 @@ from do import do_find_top_answers, do_remember_user_start
 from df_config import detect_intent_texts
 
 
-logging.basicConfig(filename='app.log', level=logging.INFO)
+root_logger= logging.getLogger()
+root_logger.setLevel(logging.INFO) # or whatever
+handler = logging.FileHandler('app.log', 'w', 'utf-8') # or whatever
+formatter = logging.Formatter('%(levelname)s - %(message)s') # or whatever
+handler.setFormatter(formatter) # Pass handler as a parameter, not assign
+root_logger.addHandler(handler)
 
 loop = asyncio.get_event_loop()
 
