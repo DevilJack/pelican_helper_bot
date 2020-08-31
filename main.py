@@ -14,7 +14,7 @@ from do import do_find_top_answers, do_remember_user_start
 from df_config import detect_intent_texts
 
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(filename='app.log', level=logging.INFO)
 
 loop = asyncio.get_event_loop()
 
@@ -31,14 +31,26 @@ xl_data = load_xl_data("qa.xlsx")
 async def send_welcome(message: types.Message):
     """Отправляет приветственное сообщение"""
     await do_remember_user_start(message)
-    hello_message = "привет, я пеликан"
+    hello_message = """
+Привет, политехник!
+
+Я - Цифровой пеликан, твой помощник и проводник в жизнь Политехнического университета. Я буду сопровождать тебя на протяжении твоего обучения. 
+
+Не стесняйся и спрашивай обо всем, что тебя интересует. Я могу рассказать тебе о Политехе, студенческой жизни здесь и не только. Пиши мне в любое время и я с радостью тебе отвечу!
+
+Но помни, что я только учусь и могу не сразу верно понять твой вопрос. Старайся сформулировать его как можно точнее."""
+
     await message.answer(hello_message)
 
 
 @dp.message_handler(commands=['help'])
 async def help_command(message: types.Message):
     """Отправляет вспомогательное сообщение"""
-    help_message = "спроси меня что-нибудь про политех"
+    help_message = """
+Не стесняйся и спрашивай обо всем, что тебя интересует. Я могу рассказать тебе о Политехе, студенческой жизни здесь и не только. Пиши мне в любое время и я с радостью тебе отвечу!
+
+Но помни, что я только учусь и могу не сразу верно понять твой вопрос. Старайся сформулировать его как можно точнее."""
+
     await message.answer(help_message)
 
 
@@ -48,6 +60,11 @@ async def text_question_handler(message: types.Message):
     global xl_data
     answers = await do_find_top_answers(message, xl_data)
 
+    q_time = strftime("%Y-%m-%d %H:%M:%S", localtime())
+    question = message.text
+    username = message.from_user.username
+    first_last = message.from_user.first_name + " " + message.from_user.last_name
+
     if answers == False:
         df_result = detect_intent_texts("pelican-vbox", "123456789", message.text, "ru")
         if df_result:
@@ -55,10 +72,7 @@ async def text_question_handler(message: types.Message):
         else:
             await message.answer("Я ещё учусь понимать все твои фразы, я ведь всё-таки пеликан :)")
 
-        q_time = strftime("%Y-%m-%d %H:%M:%S", localtime())
-        question = message.text
-        username = message.from_user.username
-        first_last = message.from_user.first_name + " " + message.from_user.last_name
+        df_result = "Нет ответа" if not df_result else df_result
 
         no_answer_message = f"""
 ====================
@@ -73,15 +87,19 @@ async def text_question_handler(message: types.Message):
 {question}
 ====================
     """
+        logging.info(f"{q_time}--{username}--{df_result}--Answered DF")
 
         await bot.send_message(PELICAN_TEAM_ID, no_answer_message)
 
         
     elif answers == -1:
+        logging.error(f"{q_time}--{username}--{question}--Error")
+
         await message.answer("Произошла ошибка :(")
         await bot.send_message(PELICAN_TEAM_ID, "Произошла ошибка :(")
     
     else:
+        logging.info(f"{q_time}--{username}--{question}--Answered from XL")
         await message.answer(answers)
 
 
