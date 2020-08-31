@@ -62,8 +62,8 @@ async def text_question_handler(message: types.Message):
 
     q_time = strftime("%Y-%m-%d %H:%M:%S", localtime())
     question = message.text
-    username = message.from_user.username
-    first_last = message.from_user.first_name + " " + message.from_user.last_name
+    username = message.from_user.username if message.from_user.username else "Nousername"
+    first_last = message.from_user.first_name if message.from_user.first_name else "Noname" + " " + message.from_user.last_name if  message.from_user.last_name else "Noname" 
 
     if answers == False:
         df_result = detect_intent_texts("pelican-vbox", "123456789", message.text, "ru")
