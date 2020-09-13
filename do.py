@@ -1,9 +1,9 @@
-import pymorphy2
+#import pymorphy2
 import json
 from typing import Dict, List, Union, Any
 from aiogram import types
-from rutermextract import TermExtractor
-from nltk.stem.snowball import SnowballStemmer
+#from rutermextract import TermExtractor
+#from nltk.stem.snowball import SnowballStemmer
 
 
 async def do_find_top_answers(message: types.Message, xl_data: Dict[str, str]) -> Union[str, bool, int]:
