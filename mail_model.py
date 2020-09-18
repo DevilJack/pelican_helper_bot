@@ -1,40 +1,65 @@
 import smtplib
-import ssl
+import os
+import mimetypes
 from email import encoders
 from email.mime.base import MIMEBase
-from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from email.mime.audio import MIMEAudio
+from email.mime.multipart import MIMEMultipart
+from config import WORK_MAIL_LOGIN, WORK_MAIL_PASSWORD
 
-from config import PROF_MAIL, WORK_MAIL_LOGIN, WORK_MAIL_PASSWORD, ZHOZH_MAIL
+
+async def attach_file(msg: str, filepath: str) -> None:
+    filename = os.path.basename(filepath)
+    ctype, encoding = mimetypes.guess_type(filepath)
+    if ctype is None or encoding is not None:
+        ctype = 'application/octet-stream'
+    maintype, subtype = ctype.split('/', 1)
+    if maintype == 'text':
+        with open(filepath) as fp:
+            file = MIMEText(fp.read(), _subtype=subtype)
+            fp.close()
+    elif maintype == 'image':
+        with open(filepath, 'rb') as fp:
+            file = MIMEImage(fp.read(), _subtype=subtype)
+            fp.close()
+    elif maintype == 'audio':
+        with open(filepath, 'rb') as fp:
+            file = MIMEAudio(fp.read(), _subtype=subtype)
+            fp.close()
+    else:
+        with open(filepath, 'rb') as fp:
+            file = MIMEBase(maintype, subtype)
+            file.set_payload(fp.read())
+            fp.close()
+            encoders.encode_base64(file)
+    file.add_header('Content-Disposition', 'attachment', filename=filename)
+    msg.attach(file)
 
 
-def send_email(mail_text: str, filename: str) -> bool:
+async def send_email(addr_to: str, msg_subj: str, msg_text: str, file: str) -> bool:
     try:
-        message = MIMEMultipart()
-        message["Subject"] = "TEST PROF MAIL"
-        message["From"] = WORK_MAIL_LOGIN
-        message["To"] = ZHOZH_MAIL
+        addr_from = WORK_MAIL_LOGIN
+        password  = WORK_MAIL_PASSWORD
 
-        message.attach(MIMEText(mail_text, "plain"))
+        msg = MIMEMultipart()
+        msg['From']    = addr_from
+        msg['To']      = addr_to
+        msg['Subject'] = msg_subj
 
-        with open(filename, "rb") as attachment:
-            
-            part = MIMEBase("application", "octet-stream")
-            part.set_payload(attachment.read())
-            
-            encoders.encode_base64(part)
-            
-            part.add_header("Content-Disposition", f"attachment; filename= {filename}")
-            
-            message.attach(part)
+        body = msg_text
+        msg.attach(MIMEText(body, 'plain'))
 
-        text = message.as_string()
-        context = ssl.create_default_context()
+        #process_attachement(msg, files)
+        await attach_file(msg, file)
 
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-            server.login(WORK_MAIL_LOGIN, WORK_MAIL_PASSWORD )
-            server.sendmail(WORK_MAIL_LOGIN, ZHOZH_MAIL, text)
-        
+        server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+        #server.starttls()
+        #server.set_debuglevel(True)
+        server.login(addr_from, password)
+        server.send_message(msg)
+        server.quit()
         return True
     except:
         return False
