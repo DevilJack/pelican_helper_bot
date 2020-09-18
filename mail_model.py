@@ -39,27 +39,27 @@ async def attach_file(msg: str, filepath: str) -> None:
 
 
 async def send_email(addr_to: str, msg_subj: str, msg_text: str, file: str) -> bool:
-    try:
-        addr_from = WORK_MAIL_LOGIN
-        password  = WORK_MAIL_PASSWORD
+    #try:
+    addr_from = WORK_MAIL_LOGIN
+    password  = WORK_MAIL_PASSWORD
 
-        msg = MIMEMultipart()
-        msg['From']    = addr_from
-        msg['To']      = addr_to
-        msg['Subject'] = msg_subj
+    msg = MIMEMultipart()
+    msg['From']    = addr_from
+    msg['To']      = addr_to
+    msg['Subject'] = msg_subj
 
-        body = msg_text
-        msg.attach(MIMEText(body, 'plain'))
+    body = msg_text
+    msg.attach(MIMEText(body, 'plain'))
 
-        #process_attachement(msg, files)
-        await attach_file(msg, file)
+    #process_attachement(msg, files)
+    await attach_file(msg, file)
 
-        server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-        #server.starttls()
-        #server.set_debuglevel(True)
-        server.login(addr_from, password)
-        server.send_message(msg)
-        server.quit()
-        return True
-    except:
-        return False
+    server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+    #server.starttls()
+    #server.set_debuglevel(True)
+    server.login(addr_from, password)
+    server.send_message(msg)
+    server.quit()
+    return True
+    # except:
+    #     return False

@@ -206,6 +206,7 @@ async def service_confirm_callback_handler(callback_query: types.CallbackQuery, 
             logging.info(f"{q_time}--New document send to email | {responsible} | {goal}")
         else:
             await callback_query.message.answer("При отправке письма на почту Профсоюзной организации произошла ошибка, пожалуйста, попробуйте позднее")
+            q_time = strftime("%Y-%m-%d %H:%M:%S", localtime())
             logging.error(f"{q_time}--Error while sending a document | {responsible} | {goal}")
         
     path = os.path.join(os.path.abspath(os.path.dirname(__file__)), filename)
