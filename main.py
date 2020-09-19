@@ -197,7 +197,7 @@ async def service_confirm_callback_handler(callback_query: types.CallbackQuery, 
         
         mail_message = f"====================\nНовый документ:\n\nЦель: {goal}\nОтветственный: {responsible}\nНазвание документа: {filename}\nДокумент был сформирован через бота (Цифровой Пеликан)\n===================="
         
-        is_sent = await send_email("profstu@gmail.com", "НОВАЯ СЛУЖЕБНАЯ ЗАПИСКА ИЗ БОТА", mail_message, filename)
+        is_sent = send_email("zhozhpost@gmail.com", "НОВАЯ СЛУЖЕБНАЯ ЗАПИСКА ИЗ БОТА", mail_message, filename)
         if is_sent:
             await callback_query.message.answer("Ваше обращение было успешно отправлено на почту Профсоюзной организации,\n\
 спасибо что воспользовались нашим ботом :)")

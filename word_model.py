@@ -9,6 +9,7 @@ async def render_new_doc_sluzhebka(state_data: Dict[str, str]) -> Union[str, Non
     building_dict = {
         "gz": "в Главном учебном корпусе",
         "nik": "в Научно-исследовательском корпусе",
+        "3k": "в III учебном корпусе",
         "du_holl": "холла в Доме учёных и выдачу ключа к нему",
         "du_actzal": "актового зала в Доме учёных и выдачу ключа к нему",
         "du_actzal_holl": "актового зала и холла в Доме учёных и выдачу ключей к ним", 
@@ -28,7 +29,7 @@ async def render_new_doc_sluzhebka(state_data: Dict[str, str]) -> Union[str, Non
 
     doc = DocxTemplate(f"word_templates/sluzhebka/{building}.docx")
 
-    if building in ("gz", "nik"):
+    if building in ("gz", "nik", "3k"):
         building_text = building_dict[building]
         
         audience = state_data['audience']
@@ -44,7 +45,6 @@ async def render_new_doc_sluzhebka(state_data: Dict[str, str]) -> Union[str, Non
         doc.render(context)
         filename = f"Служебка_{random_number}.docx"
         doc.save(filename)
-
     else:
         room = state_data['room']
         building_text = building_dict[f"{building}_{room}"]

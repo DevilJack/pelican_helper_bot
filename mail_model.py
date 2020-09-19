@@ -10,7 +10,7 @@ from email.mime.multipart import MIMEMultipart
 from config import WORK_MAIL_LOGIN, WORK_MAIL_PASSWORD
 
 
-async def attach_file(msg: str, filepath: str) -> None:
+def attach_file(msg: str, filepath: str) -> None:
     filename = os.path.basename(filepath)
     ctype, encoding = mimetypes.guess_type(filepath)
     if ctype is None or encoding is not None:
@@ -38,7 +38,7 @@ async def attach_file(msg: str, filepath: str) -> None:
     msg.attach(file)
 
 
-async def send_email(addr_to: str, msg_subj: str, msg_text: str, file: str) -> bool:
+def send_email(addr_to: str, msg_subj: str, msg_text: str, file: str = None) -> bool:
     #try:
     addr_from = WORK_MAIL_LOGIN
     password  = WORK_MAIL_PASSWORD
@@ -52,7 +52,8 @@ async def send_email(addr_to: str, msg_subj: str, msg_text: str, file: str) -> b
     msg.attach(MIMEText(body, 'plain'))
 
     #process_attachement(msg, files)
-    await attach_file(msg, file)
+    if file:
+        attach_file(msg, file)
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
     #server.starttls()
@@ -63,3 +64,6 @@ async def send_email(addr_to: str, msg_subj: str, msg_text: str, file: str) -> b
     return True
     # except:
     #     return False
+
+
+#send_email("zhozhpost@gmail.com", "subj", "text")
