@@ -15,7 +15,7 @@ from do import do_find_top_answers, do_remember_user_start
 from df_config import detect_intent_texts
 from states import ServiceForm
 from word_model import render_new_doc_sluzhebka
-from mail_model import send_email
+#from mail_model import send_email
 
 
 root_logger= logging.getLogger()
@@ -66,7 +66,7 @@ async def help_command(message: types.Message):
 @dp.message_handler(lambda message: message.text == '💼 Подать документ 💼')
 async def documents_main_handler(message: types.Message):
     text = "Это новая функция, с помощью которой Вы можете заполнить документ и отправить его \
-на почту Профсоюзной организации для утверждения (profstu@gmail.com).\n\n\
+в чат Профсоюзной организации для утверждения.\n\n\
 Для успешного оформления документа, пожалуйста, ВНИМАТЕЛЬНО читайте то, что Вам\n\
 пишет бот, ВНИМАТЕЛЬНО отвечайте на его вопросы, представьте себе, что \n\
 Вы заполняете настоящий бумажный документ - цените время людей, которые будут проверять Ваш документ.\n\n\
@@ -189,7 +189,7 @@ async def service_confirm_callback_handler(callback_query: types.CallbackQuery, 
         await callback_query.message.answer("Вы отменили отправку служебной записки, ВСЕ введенные Вами данные были стерты", reply_markup=MAIN_KEYBOARD)
 
     elif callback_query.data == "confirm_deal_send":
-        await callback_query.message.answer("Вы подтвердили отправку служебной записки на почту профсоюзной организации (profstu@gmail.com)", disable_notification=True)
+        await callback_query.message.answer("Вы подтвердили отправку служебной записки в чат Профсоюзной организации", disable_notification=True)
         await callback_query.message.answer("Отправка Вашего обращения...", disable_notification=True)
         
         goal = state_data.get('goal')
@@ -197,17 +197,22 @@ async def service_confirm_callback_handler(callback_query: types.CallbackQuery, 
         
         mail_message = f"====================\nНовый документ:\n\nЦель: {goal}\nОтветственный: {responsible}\nНазвание документа: {filename}\nДокумент был сформирован через бота (Цифровой Пеликан)\n===================="
         
-        is_sent = send_email("zhozhpost@gmail.com", "НОВАЯ СЛУЖЕБНАЯ ЗАПИСКА ИЗ БОТА", mail_message, filename)
-        if is_sent:
-            await callback_query.message.answer("Ваше обращение было успешно отправлено на почту Профсоюзной организации,\n\
+        await bot.send_message(PELICAN_TEAM_ID, mail_message)
+
+        with open(filename, 'rb') as file:
+            await bot.send_document(PELICAN_TEAM_ID, file, disable_notification=True)
+
+        #is_sent = send_email("zhozhpost@gmail.com", "НОВАЯ СЛУЖЕБНАЯ ЗАПИСКА ИЗ БОТА", mail_message, filename)
+        #if is_sent:
+        await callback_query.message.answer("Ваше обращение было успешно отправлено в чат Профсоюзной организации,\n\
 спасибо что воспользовались нашим ботом :)")
-            
-            q_time = strftime("%Y-%m-%d %H:%M:%S", localtime())
-            logging.info(f"{q_time}--New document send to email | {responsible} | {goal}")
-        else:
-            await callback_query.message.answer("При отправке письма на почту Профсоюзной организации произошла ошибка, пожалуйста, попробуйте позднее")
-            q_time = strftime("%Y-%m-%d %H:%M:%S", localtime())
-            logging.error(f"{q_time}--Error while sending a document | {responsible} | {goal}")
+        
+        q_time = strftime("%Y-%m-%d %H:%M:%S", localtime())
+        logging.info(f"{q_time}--New document send to pelican chat | {responsible} | {goal}")
+        # else:
+        #     await callback_query.message.answer("При отправке письма на почту Профсоюзной организации произошла ошибка, пожалуйста, попробуйте позднее")
+        #     q_time = strftime("%Y-%m-%d %H:%M:%S", localtime())
+        #     logging.error(f"{q_time}--Error while sending a document | {responsible} | {goal}")
         
     path = os.path.join(os.path.abspath(os.path.dirname(__file__)), filename)
     os.remove(path)
