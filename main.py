@@ -124,7 +124,7 @@ async def service_room_callback_handler(callback_query: types.CallbackQuery, sta
         await state.update_data(room=callback_query.data)
         await ServiceForm.date_interval.set()
         await callback_query.message.answer("Пожалуйста, введите ПРОМЕЖУТОК ДАТ, необходимый для Вашего мероприятия:\n\
-( НАПРИМЕР, 'с 18 сентября по 14 ноября 2020 года' или 'c 20 марта по 25 мая 2020 года (по четвергам)' ):", reply_markup=CANCEL_KEYBOARD)
+( НАПРИМЕР, 'с 18 сентября по 14 ноября 2020 года' или 'c 20 марта по 25 мая 2020 года (по четвергам)' или, если один день - '18 сентября' ):", reply_markup=CANCEL_KEYBOARD)
 
 
 @dp.message_handler(state=ServiceForm.audience)
@@ -133,7 +133,7 @@ async def service_audience_message_handler(message: types.Message, state: FSMCon
     await state.update_data(audience=message.text)
     await ServiceForm.date_interval.set()
     await message.answer("Пожалуйста, введите ПРОМЕЖУТОК ДАТ, необходимый для Вашего мероприятия:\n\
-( НАПРИМЕР, 'с 18 сентября по 14 ноября 2020 года' или 'c 20 марта по 25 мая 2020 года (по четвергам)' ):", reply_markup=CANCEL_KEYBOARD)
+( НАПРИМЕР, 'с 18 сентября по 14 ноября 2020 года' или 'c 20 марта по 25 мая 2020 года (по четвергам)' или, если один день - '18 сентября' ):", reply_markup=CANCEL_KEYBOARD)
 
 
 @dp.message_handler(state=ServiceForm.date_interval)
@@ -160,7 +160,7 @@ async def service_goal_message_handler(message: types.Message, state: FSMContext
     await state.update_data(goal=message.text)
     await ServiceForm.responsible.set()
     await message.answer("Пожалуйста, введите ФАМИЛИЮ, ИМЯ и ТЕЛЕФОН ответственного за Ваше мероприятие:\n\
-( НАПРИМЕР, 'Липянина Анна, тел.: 89217871320' )", reply_markup=CANCEL_KEYBOARD)
+( НАПРИМЕР, 'Иванов Иван, тел.: 89111111111' )", reply_markup=CANCEL_KEYBOARD)
 
 
 @dp.message_handler(state=ServiceForm.responsible)
