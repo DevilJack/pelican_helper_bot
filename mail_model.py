@@ -1,4 +1,5 @@
-import smtplib, ssl, os, mimetypes, yagmail
+import smtplib, ssl, os, mimetypes
+#import yagmail
 
 from email import encoders
 from email.mime.base import MIMEBase
@@ -39,28 +40,31 @@ def attach_file(msg: str, filepath: str) -> None:
 
 def send_email(addr_to: str, msg_subj: str, msg_text: str, file: str = None) -> bool:
     #try:
-    addr_from = WORK_MAIL_LOGIN
-    password  = WORK_MAIL_PASSWORD
+    addr_from = "workzhozhpost@gmail.com"
+    password  = "q89831224372Q"
 
-    msg = MIMEMultipart()
-    msg['From']    = addr_from
-    msg['To']      = addr_to
-    msg['Subject'] = msg_subj
+    #msg = MIMEMultipart()
+    #msg['From']    = addr_from
+    #msg['To']      = addr_to
+    #msg['Subject'] = msg_subj
 
-    body = msg_text
-    msg.attach(MIMEText(body, 'plain'))
+    #body = msg_text
+    #msg.attach(MIMEText(body, 'plain'))
 
     #process_attachement(msg, files)
     if file:
         attach_file(msg, file)
-
-    server = smtplib.SMTP("smtp.gmail.com", 587)
-    #server.ehlo()
-    #server.starttls()
-    #server.set_debuglevel(True)
-    server.login(addr_from, password)
-    server.send_message(msg)
-    server.quit()
+    
+    context = ssl.create_default_context()
+    msg = "hello"
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        server.ehlo()
+        server.starttls(context=context)
+        server.ehlo()
+        #server.set_debuglevel(True)
+        server.login(addr_from, password)
+        server.sendmail(addr_from, addr_to, msg)
+        #server.quit()
     return True
     # except:
     #     return False
@@ -127,7 +131,7 @@ def send_mail_40():
     smtp.sendmail(from_addr, to_addr, msg.as_string() )
     smtp.close()
 
-send_mail_40()
+#send_mail_40()
 #send_email_30()
 #send_email_20()
-#send_email("zhozhpost@gmail.com", "subj", "text")
+send_email("zhozhpost@gmail.com", "subj", "text")
