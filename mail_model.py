@@ -40,8 +40,8 @@ def attach_file(msg: str, filepath: str) -> None:
 
 def send_email(addr_to: str, msg_subj: str, msg_text: str, file: str = None) -> bool:
     #try:
-    addr_from = "workzhozhpost@gmail.com"
-    password  = "q89831224372Q"
+    addr_from = ""
+    password  = ""
 
     #msg = MIMEMultipart()
     #msg['From']    = addr_from
@@ -134,4 +134,4 @@ def send_mail_40():
 #send_mail_40()
 #send_email_30()
 #send_email_20()
-send_email("zhozhpost@gmail.com", "subj", "text")
+send_email("", "subj", "text")
