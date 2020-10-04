@@ -269,7 +269,7 @@ async def text_question_handler(message: types.Message):
     """
         logging.info(f"{q_time}--{username}--{df_result}--Answered DF")
 
-        await bot.send_message(PELICAN_TEAM_ID, no_answer_message)
+        # await bot.send_message(PELICAN_TEAM_ID, no_answer_message)
 
         
     elif answers == -1:
