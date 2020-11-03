@@ -156,9 +156,9 @@ async def service_audience_message_handler(message: types.Message, state: FSMCon
     #print("in audience")
     await state.update_data(audience=message.text)
     await ServiceForm.date_interval.set()
-    await message.answer("Пожалуйста, введите (с помощью клавиатуры) дату(ы) Вашего мероприятия.\n\
-Например: 'с 18 сентября по 14 ноября 2020 года' или 'c 20 марта по 25 мая 2020 года (по четвергам)' или,\
-если один день, — '18 сентября'.", reply_markup=CANCEL_KEYBOARD)
+    await message.answer("Пожалуйста, введите (с помощью клавиатуры) дату(ы) Вашего мероприятия (обратите внимание на '0' в датах, в которых одна значащая цифра).\n\
+Например: 'с 02 сентября по 14 ноября 2020 года' или 'c 20 марта по 08 мая 2020 года (по четвергам)' или,\
+если один день, — '05 сентября'.", reply_markup=CANCEL_KEYBOARD)
 
 
 @dp.message_handler(state=ServiceForm.date_interval)
