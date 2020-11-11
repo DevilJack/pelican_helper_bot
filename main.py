@@ -176,7 +176,7 @@ async def service_time_interval_message_handler(message: types.Message, state: F
     await state.update_data(time_interval=message.text)
     await ServiceForm.goal.set()
     await message.answer("Пожалуйста, введите цель Вашего мероприятия. Обратите внимание на слово 'ДЛЯ' в каждом примере!\n\
-Например: 'для проведения собраний профоргов ИКНТ' или\
+Например: 'для проведения собраний профоргов ИКНТ' или \
 'для проведения отчетно-выборной конференции профбюро ИСИ'.", reply_markup=CANCEL_KEYBOARD)
 
 
