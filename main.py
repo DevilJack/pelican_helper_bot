@@ -146,7 +146,7 @@ async def service_room_callback_handler(callback_query: types.CallbackQuery, sta
     elif callback_query.data in ('actzal', 'holl', 'actzal_holl', 'prime_time', 'actzal_prime_time'):
         await state.update_data(room=callback_query.data)
         await ServiceForm.date_interval.set()
-        await callback_query.message.answer("Пожалуйста, введите (с помощью клавиатуры) дату(ы) Вашего мероприятия.\n\
+        await callback_query.message.answer("Пожалуйста, введите (с помощью клавиатуры) дату(-ы) Вашего мероприятия.\n\
 Например: 'с 18 сентября по 14 ноября 2020 года' или 'c 20 марта по 25 мая 2020 года (по четвергам)' или,\
 если один день, — '18 сентября'.", reply_markup=CANCEL_KEYBOARD)
 
@@ -156,7 +156,7 @@ async def service_audience_message_handler(message: types.Message, state: FSMCon
     #print("in audience")
     await state.update_data(audience=message.text)
     await ServiceForm.date_interval.set()
-    await message.answer("Пожалуйста, введите (с помощью клавиатуры) дату(ы) Вашего мероприятия (обратите внимание на '0' в датах, в которых одна значащая цифра).\n\
+    await message.answer("Пожалуйста, введите (с помощью клавиатуры) дату(-ы) Вашего мероприятия (обратите внимание на '0' в датах, в которых одна значащая цифра).\n\
 Например: 'с 02 сентября по 14 ноября 2020 года' или 'c 20 марта по 08 мая 2020 года (по четвергам)' или,\
 если один день, — '05 сентября'.", reply_markup=CANCEL_KEYBOARD)
 
@@ -164,7 +164,7 @@ async def service_audience_message_handler(message: types.Message, state: FSMCon
 @dp.message_handler(state=ServiceForm.date_interval)
 async def service_date_interval_message_handler(message: types.Message, state: FSMContext):
     #print("in date_interval")
-    await state.update_data(date_interval=message.text)
+    await state.update_data(date_interval=(message.text[0].lower() + message.text[1:]))
     await ServiceForm.time_interval.set()
     await message.answer("Пожалуйста, введите временной интервал Вашего мероприятия.\n\
 Например: 'с 18:00 до 21:00'.", reply_markup=CANCEL_KEYBOARD)
@@ -173,7 +173,7 @@ async def service_date_interval_message_handler(message: types.Message, state: F
 @dp.message_handler(state=ServiceForm.time_interval)
 async def service_time_interval_message_handler(message: types.Message, state: FSMContext):
     #print("in time_interval")
-    await state.update_data(time_interval=message.text)
+    await state.update_data(time_interval=(message.text[0].lower() + message.text[1:]))
     await ServiceForm.goal.set()
     await message.answer("Пожалуйста, введите цель Вашего мероприятия. Обратите внимание на слово 'ДЛЯ' в каждом примере!\n\
 Например: 'для проведения собраний профоргов ИКНТ' или \
@@ -183,7 +183,7 @@ async def service_time_interval_message_handler(message: types.Message, state: F
 @dp.message_handler(state=ServiceForm.goal)
 async def service_goal_message_handler(message: types.Message, state: FSMContext):
     #print("in goal")
-    await state.update_data(goal=message.text)
+    await state.update_data(goal=(message.text[0].lower() + message.text[1:]))
     await ServiceForm.responsible.set()
     await message.answer("Пожалуйста, введите ФАМИЛИЮ, ИМЯ и ТЕЛЕФОН ответственного за Ваше мероприятие.\n\
 Например: 'Иванов Иван, тел.: 89111111111'.", reply_markup=CANCEL_KEYBOARD)
